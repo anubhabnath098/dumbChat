@@ -31,7 +31,6 @@ export default function Chatinput({ fromUser, toUser, handleSendMsg }) {
   const sendChat = async (e) => {
     e.preventDefault();
     if (!msg.trim() && !fileRef.current) return;
-
     setLoading(true);
     const formData = new FormData();
     formData.append("from", fromUser);

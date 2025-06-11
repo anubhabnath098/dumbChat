@@ -30,56 +30,47 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
     fetchMessages();
   }, [currentChat, currentUser]);
 
-  const handleSendMsg = async ({ text, image }) => {
+  const handleSendMsg = async (formData) => {
     try {
-
-      await axios.post(sendMessageRoute, {
-        from: currentUser._id,
-        to: currentChat._id,
-        message: text,
-        image: image,
+      const { data } = await axios.post(sendMessageRoute, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-
-      // Emit real-time message via socket
+      const saved = data.createdMessage || data;
       socket.current.emit("send-msg", {
-        to: currentChat._id,
-        from: currentUser._id,
-        message: text,
-        image: image,
+        to:      currentChat._id,
+        from:    currentUser._id,
+        message: saved.message.text,
+        image:   saved.message.image,
       });
-
-      // Update local state
-      const msgs = [...messages];
-      msgs.push({ fromSelf: true, message: text, image: image });
-      setMessages(msgs);
-    } catch (error) {
-      console.error("Error sending message:", error);
+      setMessages((prev) => [
+        ...prev,
+        { fromSelf: true, message: saved.message },
+      ]);
+    } catch (e) {
+      console.error(e);
     }
   };
 
-  useEffect(() => {
-    console.log(socket.current);
-    if (socket.current) {
-      socket.current.on("msg-receive", (data) => {
-        console.log(data);
-        setArrivalMessage({
-          fromSelf: false,
-          message: data.message,
-          image: data.image,
-        });
+
+ useEffect(() => {
+    if (!socket.current) return;
+    socket.current.on("msg-receive", (data) => {
+      setArrivalMessage({
+        fromSelf: false,
+        message:  { text: data.message, image: data.image },
       });
-    }
+    });
+    return () => socket.current.off("msg-receive");
   }, [socket]);
 
   useEffect(() => {
-    if (arrivalMessage) {
-      setMessages((prev) => [...prev, arrivalMessage]);
-    }
+    if (arrivalMessage) setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
 
   return (
     <>
@@ -131,12 +122,14 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
                   Remove Image
                 </button>
               </div>
-              <Chatinput handleSendMsg={handleSendMsg} previewImg={previewImg} setPreviewImg={setPreviewImg}/>
+              <Chatinput handleSendMsg={handleSendMsg} previewImg={previewImg} setPreviewImg={setPreviewImg} fromUser={currentUser._id}
+            toUser={currentChat._id}/>
             </div>
             
           )}
 
-          <Chatinput handleSendMsg={handleSendMsg} previewImg={previewImg} setPreviewImg={setPreviewImg}/>
+          <Chatinput handleSendMsg={handleSendMsg} previewImg={previewImg} setPreviewImg={setPreviewImg} fromUser={currentUser._id}
+            toUser={currentChat._id}/>
         </Container>
       )}
     </>
