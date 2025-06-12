@@ -113,7 +113,6 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 ## 📸 Screenshots
 
-> Make sure to create a folder named `screenshots` in the root directory of your repo and place all screenshots there.
 
 ### 🏠 Welcome Page
 
