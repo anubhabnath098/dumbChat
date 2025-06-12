@@ -118,6 +118,7 @@ const Container = styled.div`
   background-color: #131324;
   align-items: center;
   gap: 1rem;
+  padding-top:1rem;
   
   @media screen and (max-width: 720px) {
     padding-top: 4rem;

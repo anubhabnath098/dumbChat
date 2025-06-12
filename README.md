@@ -7,7 +7,7 @@ A real-time, full-stack chat application with user authentication, contact list,
 ## ✨ Features
 
 * ✅ Realtime 1-to-1 messaging
-* 🖼️ Avatar image upload via Cloudinary
+* 🖼️ send images to other
 * 🢑 Contact list of all registered users
 * 💬 Message history
 * 📱 Fully responsive mobile-first design
@@ -20,7 +20,7 @@ A real-time, full-stack chat application with user authentication, contact list,
 ```
 /
 ├── client   # React frontend
-└── server   # Express backend with Socket.IO and MongoDB
+└── server   # Express backend with Socket.IO, MongoDB and cloudinary
 ```
 
 ---
